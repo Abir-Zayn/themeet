@@ -1,7 +1,9 @@
 import { Schema, model, models, Document } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 // TypeScript interface for Event document
 export interface IEvent extends Document {
+  eventId: string;
   title: string;
   slug: string;
   description: string;
@@ -22,6 +24,12 @@ export interface IEvent extends Document {
 
 const EventSchema = new Schema<IEvent>(
   {
+    eventId: {
+      type: String,
+      default: () => uuidv4(),
+      unique: true,
+      immutable: true,
+    },
     title: {
       type: String,
       required: [true, "Title is required"],
