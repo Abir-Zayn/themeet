@@ -38,12 +38,12 @@ const Home = async () => {
       </p>
       <ExploreBtn />
 
-      <div className="mt-20 space-y-7">
+      <div className="mt-20 space-y-7 ml-20">
         <h3>Featured Events</h3>
         {events.length > 0 ? (
-          <ul>
+          <ul className="flex gap-6 overflow-x-auto pb-4">
             {events.map((event: IEvent) => (
-              <li key={event.title}>
+              <li key={event.title} className="min-w-[380px] flex-shrink-0">
                 <EventCard
                   title={event.title}
                   image={event.image}

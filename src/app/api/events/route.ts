@@ -1,4 +1,4 @@
-import connectDB from "@/lib/mongodb";
+import connectDB from "@/src/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import Event from "@/src/lib/database/event.model";
 import { v2 as cloudinary } from "cloudinary";

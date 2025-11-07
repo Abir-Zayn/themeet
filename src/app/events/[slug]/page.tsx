@@ -36,9 +36,12 @@ export default async function EventPage({ params }: PageProps) {
     notFound();
   }
 
+  const resolvedEventId = typeof event.id === 'string' ? event.id : event._id?.toString?.() ?? '';
+
   // Transform the event data to match the expected props
   const eventProps: EventDetailsPageProps = {
     event: {
+      id: resolvedEventId,
       title: event.title,
       description: event.description,
       image: event.image,

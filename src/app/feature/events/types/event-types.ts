@@ -11,6 +11,7 @@ export type EventTagProps = {
 
 export type EventDetailsPageProps = {
   event: {
+    id: string;
     title: string;
     description: string;
     image?: string;
