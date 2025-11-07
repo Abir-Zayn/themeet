@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, MapPin } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/src/app/ui/card";
+import SpotlightCard from "@/components/SpotlightCard";
 
 interface Props {
   title: string;
@@ -14,7 +14,10 @@ interface Props {
 
 const EventCard = ({ title, image, slug, location, date, time }: Props) => {
   return (
-    <Card className="overflow-hidden transition-all duration-300 bg-transparent border-transparent rounded-xl group">
+    <SpotlightCard
+      className="w-full overflow-hidden transition-all duration-300 bg-transparent border-transparent rounded-xl group p-0"
+      spotlightColor="rgba(0, 229, 255, 0.2)"
+    >
       <Link href={`/events/${slug}`} className="block text-foreground hover:text-foreground/80">
         <div className="relative h-48 w-full overflow-hidden">
           <Image
@@ -25,13 +28,13 @@ const EventCard = ({ title, image, slug, location, date, time }: Props) => {
           />
         </div>
         
-        <CardHeader className="p-4">
+        <div className="p-4">
           <h3 className="text-lg font-semibold line-clamp-2 h-14 overflow-hidden text-foreground">
             {title}
           </h3>
-        </CardHeader>
+        </div>
         
-        <CardContent className="p-4 pt-0 space-y-3">
+        <div className="p-4 pt-0 space-y-3">
           <div className="flex items-center gap-2 text-sm">
             <MapPin className="h-4 w-4 flex-shrink-0" />
             <span className="line-clamp-1">{location}</span>
@@ -47,13 +50,13 @@ const EventCard = ({ title, image, slug, location, date, time }: Props) => {
               <span>{time}</span>
             </div>
           </div>
-        </CardContent>
+        </div>
         
-        <CardFooter className="p-4 pt-0">
+        <div className="p-4 pt-0">
           {/* Additional footer content can go here */}
-        </CardFooter>
+        </div>
       </Link>
-    </Card>
+    </SpotlightCard>
   );
 };
 
