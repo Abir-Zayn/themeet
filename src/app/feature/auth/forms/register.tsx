@@ -6,6 +6,7 @@ import { Input } from "@/src/app/ui/input";
 import { Label } from "@/src/app/ui/label";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -13,6 +14,7 @@ export const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,13 +53,15 @@ export const RegisterForm = () => {
 
       // Registration successful
       toast.success("Signup successful");
-      // Reset form
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      // Redirect to login after a short delay to show the success message
+      setTimeout(() => {
+        router.push('/auth/login');
+      }, 1000);
+      return; // Exit the function to prevent further execution
+      
     } catch (error) {
       console.error("Registration failed:", error);
+      // Show error toast
       toast.error("Network error. Please try again.");
     } finally {
       setIsLoading(false);

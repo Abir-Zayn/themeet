@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, MapPin } from "lucide-react";
-import SpotlightCard from "@/components/SpotlightCard";
+import SpotlightCard from "@/src/app/components/SpotlightCard";
 
 interface Props {
   title: string;
