@@ -3,6 +3,7 @@ import { Schibsted_Grotesk, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import LightRays from "./components/LightRays";
 import Navbar from "./components/navbar";
+import { Toaster } from "sonner";
 
 
 const schibsted_Grotesk = Schibsted_Grotesk({
@@ -45,6 +46,7 @@ export default function RootLayout({
           />
         </div>
         <main className="relative min-h-screen">{children}</main>
+        <Toaster />
       </body>
     </html>
   );

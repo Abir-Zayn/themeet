@@ -5,6 +5,7 @@ import { Button } from "@/src/app/ui/button";
 import { Input } from "@/src/app/ui/input";
 import { Label } from "@/src/app/ui/label";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -12,33 +13,52 @@ export const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      toast.error("Password must be at least 8 characters");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // TODO: Implement registration API call
-      console.log("Registration attempt:", { username, email, password });
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert("Registration successful!");
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error === "Email already registered") {
+          toast.error("Can't be created with duplicate email");
+        } else {
+          toast.error(data.error || 'Registration failed');
+        }
+        return;
+      }
+
+      // Registration successful
+      toast.success("Signup successful");
+      // Reset form
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     } catch (error) {
       console.error("Registration failed:", error);
-      setError("Registration failed!");
+      toast.error("Network error. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +113,6 @@ export const RegisterForm = () => {
             placeholder="Confirm your password"
           />
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Signing up..." : "Sign Up"}
         </Button>
