@@ -31,30 +31,6 @@ export default function Navbar() {
             <Link href="/signin">Log In</Link>
           </Button>
         </div>
-        {/* Mobile sheet menu */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="ml-2 md:hidden">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="pr-0">
-            <div className="flex flex-col gap-4 p-4">
-              <Link href="/" className="font-bold text-xl">
-                The Meet
-              </Link>
-              <nav className="flex flex-col gap-2 text-lg">
-                <Link href="/signup" className="text-muted-foreground hover:text-foreground">
-                  Welcome User
-                </Link>
-                <Link href="/signin" className="text-muted-foreground hover:text-foreground">
-                  Log In
-                </Link>
-              </nav>
-            </div>
-          </SheetContent>
-        </Sheet>
       </div>
     </header>
   );
