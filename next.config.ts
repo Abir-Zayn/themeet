@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      // for the unsplash
+      {
+        protocol: "https",
+        hostname: "unsplash.com",
+        pathname: "/photos/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
   reactCompiler: true,
