@@ -4,6 +4,7 @@ import "./globals.css";
 import LightRays from "./components/LightRays";
 import Navbar from "./components/navbar";
 import { Toaster } from "sonner";
+import { SessionProvider } from "../lib/providers/SessionProvider";
 
 
 const schibsted_Grotesk = Schibsted_Grotesk({
@@ -31,22 +32,24 @@ export default function RootLayout({
       <body
         className={`${schibsted_Grotesk.variable} ${martianMono.variable} min-h-screen antialiased`}
       >
-        <Navbar />
-        <div className="absolute inset-0 top-0 z-[-1] min-h-screen">
-          <LightRays
-            raysOrigin="top-center-offset"
-            raysColor="#5dfeca"
-            raysSpeed={0.5}
-            lightSpread={0.4}
-            rayLength={1.2}
-            followMouse={true}
-            mouseInfluence={0.02}
-            noiseAmount={0.0}
-            distortion={0.01}
-          />
-        </div>
-        <main className="relative min-h-screen">{children}</main>
-        <Toaster />
+        <SessionProvider>
+          <Navbar />
+          <div className="absolute inset-0 top-0 z-[-1] min-h-screen">
+            <LightRays
+              raysOrigin="top-center-offset"
+              raysColor="#5dfeca"
+              raysSpeed={0.5}
+              lightSpread={0.4}
+              rayLength={1.2}
+              followMouse={true}
+              mouseInfluence={0.02}
+              noiseAmount={0.0}
+              distortion={0.01}
+            />
+          </div>
+          <main className="relative min-h-screen">{children}</main>
+          <Toaster />
+        </SessionProvider>
       </body>
     </html>
   );

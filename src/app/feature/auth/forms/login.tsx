@@ -5,25 +5,37 @@ import { Button } from "@/src/app/ui/button";
 import { Input } from "@/src/app/ui/input";
 import { Label } from "@/src/app/ui/label";
 import Link from "next/link";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // TODO: Implement login API call
-      console.log("Login attempt:", { email, password });
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert("Login successful!");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, // Don't redirect automatically
+      });
+
+      if (result?.error) {
+        toast.error("Invalid email or password");
+      } else if (result?.ok) {
+        toast.success("Login successful!");
+        // Redirect to home page after successful login
+        router.push("/");
+      }
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Login failed!");
+      toast.error("Network error. Please try again.");
     } finally {
       setIsLoading(false);
     }
