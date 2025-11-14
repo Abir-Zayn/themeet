@@ -51,6 +51,7 @@ const Home = async () => {
                   slug={event.slug}
                   date={event.date}
                   time={event.time}
+                  totalParticipants={typeof event.totalParticipants === 'number' ? event.totalParticipants : 0}
                 />
               </li>
             ))}

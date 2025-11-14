@@ -1,7 +1,10 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import {
   bookingFormSchema,
@@ -51,10 +54,14 @@ export function BookingModal({ trigger, eventId }: BookingModalProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [formState, setFormState] = useState<FormState>(initialFormState);
+  const { data: session } = useSession();
+  const userEmail = useMemo(() => session?.user?.email ?? "", [session?.user?.email]);
+  const isAuthenticated = userEmail.length > 0;
+  const router = useRouter();
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
-      email: "",
+      email: userEmail,
       personName: "",
       organizations: "",
       phone: "",
@@ -65,10 +72,24 @@ export function BookingModal({ trigger, eventId }: BookingModalProps) {
     },
   });
 
+  useEffect(() => {
+    if (userEmail) {
+      form.setValue("email", userEmail);
+    }
+  }, [form, userEmail]);
+
   function onSubmit(values: BookingFormData) {
     startTransition(async () => {
       form.clearErrors();
       setFormState(initialFormState);
+      if (!isAuthenticated) {
+        setFormState({
+          message: "Please log in to register for this event.",
+          status: "ERROR",
+        });
+        return;
+      }
+
       const formData = new FormData();
       Object.entries(values).forEach(([key, value]) => {
         formData.append(key, String(value));
@@ -79,6 +100,14 @@ export function BookingModal({ trigger, eventId }: BookingModalProps) {
         form.reset();
         setOpen(false);
         setFormState(initialFormState);
+
+        if (values.attending === "no") {
+          toast.warning("If youre not interested then why submitting form");
+        } else {
+          toast.success("You are registered for the event!");
+        }
+
+        router.refresh();
         return;
       }
 
@@ -148,6 +177,9 @@ export function BookingModal({ trigger, eventId }: BookingModalProps) {
                         type="email"
                         placeholder="john@example.com"
                         {...field}
+                        value={userEmail}
+                        readOnly
+                        disabled
                       />
                     </FormControl>
                     <FormMessage />
@@ -283,14 +315,6 @@ export function BookingModal({ trigger, eventId }: BookingModalProps) {
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="high-chance" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            High Chance
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
                             <RadioGroupItem value="online" />
                           </FormControl>
                           <FormLabel className="font-normal">Online</FormLabel>
@@ -306,9 +330,9 @@ export function BookingModal({ trigger, eventId }: BookingModalProps) {
               <Button
                 type="submit"
                 className="ml-auto text-black"
-                disabled={isPending}
+                disabled={isPending || !isAuthenticated}
               >
-                {isPending ? "Submitting..." : "Submit Booking"}
+                {isPending ? "Submitting..." : isAuthenticated ? "Submit Booking" : "Log in to book"}
               </Button>
             </DialogFooter>
           </form>

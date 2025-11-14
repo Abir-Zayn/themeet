@@ -24,5 +24,6 @@ export type EventDetailsPageProps = {
     agenda: string[];
     organizer: string;
     tags: string[];
+    totalParticipants: number;
   };
 };
