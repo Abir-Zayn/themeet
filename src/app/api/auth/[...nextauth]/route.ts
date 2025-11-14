@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { type NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
@@ -10,7 +10,7 @@ import { JWT } from "next-auth/jwt"
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "your-access-secret-key"
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "your-refresh-secret-key"
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
@@ -143,6 +143,8 @@ const handler = NextAuth({
     signIn: '/auth/login',
     error: '/auth/login',
   },
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }

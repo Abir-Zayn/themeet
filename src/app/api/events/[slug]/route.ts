@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/src/lib/mongodb';
-import Event, { IEvent } from '@/src/lib/database/event.model';
+import Event from '@/src/lib/database/event.model';
+import Booking from '@/src/lib/database/booking.model';
+import { Types } from 'mongoose';
 
 /**
  * GET /api/events/[slug]
@@ -29,19 +31,46 @@ export async function GET(
     const sanitizedSlug = slug.trim().toLowerCase();
 
     // 5. Query events by slug
-    const event = await Event.findOne({ slug: sanitizedSlug }).lean();
+    const eventDocument = await Event.findOne({ slug: sanitizedSlug });
 
     // Handle events not found
-    if (!event) {
+    if (!eventDocument) {
       return NextResponse.json(
         { message: `Event with slug '${sanitizedSlug}' not found` },
         { status: 404 }
       );
     }
 
+    const eventId = eventDocument._id.toString();
+
+    let totalParticipants = 0;
+
+    const aggregation = await Booking.aggregate<{
+      _id: Types.ObjectId;
+      count: number;
+    }>([
+      {
+        $match: {
+          eventId: new Types.ObjectId(eventId),
+          attending: { $in: ['yes', 'online'] },
+        },
+      },
+      {
+        $group: {
+          _id: '$eventId',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    totalParticipants = aggregation[0]?.count ?? 0;
+
     // Return successful response with events data
     return NextResponse.json(
-      { message: 'Event fetched successfully', event },
+      {
+        message: 'Event fetched successfully',
+        event: { ...eventDocument.toObject(), totalParticipants },
+      },
       { status: 200 }
     );
   } catch (error) {

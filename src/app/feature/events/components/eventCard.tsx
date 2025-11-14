@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Calendar, Clock, MapPin, UsersRound } from "lucide-react";
 import SpotlightCard from "@/src/app/components/SpotlightCard";
 
 interface Props {
@@ -10,9 +10,10 @@ interface Props {
   slug: string;
   date: string;
   time: string;
+  totalParticipants: number;
 }
 
-const EventCard = ({ title, image, slug, location, date, time }: Props) => {
+const EventCard = ({ title, image, slug, location, date, time, totalParticipants }: Props) => {
   return (
     <SpotlightCard
       className="w-full overflow-hidden transition-all duration-300 bg-transparent border-transparent rounded-xl group p-0"
@@ -49,6 +50,11 @@ const EventCard = ({ title, image, slug, location, date, time }: Props) => {
               <Clock className="h-4 w-4" />
               <span>{time}</span>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm">
+            <UsersRound className="h-4 w-4" />
+            <span>{totalParticipants} registered</span>
           </div>
         </div>
         

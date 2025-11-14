@@ -2,9 +2,12 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { getServerSession } from 'next-auth';
 import connectToDatabase from '@/src/lib/mongodb';
 import Booking from '@/src/lib/database/booking.model';
+import Event from '@/src/lib/database/event.model';
 import { BookingFormData, bookingFormSchema } from '../schema/booking-form-schema';
+import { authOptions } from '@/src/app/api/auth/[...nextauth]/route';
 
 export type FormState = {
   message: string;
@@ -18,16 +21,27 @@ export async function createBooking(
   eventId: string // Pass event ID from parent component
 ): Promise<FormState> {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return {
+        message: 'You must be logged in to create a booking.',
+        status: 'ERROR',
+      };
+    }
+
+    const userEmail = session.user.email.toLowerCase();
+
     // Parse and validate form data using your Zod schema
     const validatedData = bookingFormSchema.parse({
-      email: formData.get('email') as string,
-      personName: formData.get('personName') as string,
-      organizations: formData.get('organizations') as string,
-      phone: formData.get('phone') as string,
-      city: formData.get('city') as string,
-      state: formData.get('state') as string,
-      donate: parseInt(formData.get('donate') as string) || 0,
-      attending: formData.get('attending') as 'yes' | 'no' | 'high-chance' | 'online',
+      email: userEmail,
+      personName: (formData.get('personName') as string) ?? '',
+      organizations: (formData.get('organizations') as string) ?? '',
+      phone: (formData.get('phone') as string) ?? '',
+      city: (formData.get('city') as string) ?? '',
+      state: (formData.get('state') as string) ?? '',
+      donate: parseInt((formData.get('donate') as string) ?? '0', 10) || 0,
+      attending: (formData.get('attending') as 'yes' | 'no' | 'online') ?? 'no',
     }) as BookingFormData;
 
     // Connect to database

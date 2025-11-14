@@ -11,7 +11,7 @@ export const bookingFormSchema = z.object({
   city: z.string().min(2, { message: "City must be at least 2 characters." }),
   state: z.string().min(2, { message: "State must be at least 2 characters." }),
   donate: z.number().min(0, { message: "Donation amount cannot be negative." }),
-  attending: z.enum(["yes", "no", "high-chance", "online"], {
+  attending: z.enum(["yes", "no", "online"], {
     message: "Please select an attendance option.",
   }),
 })

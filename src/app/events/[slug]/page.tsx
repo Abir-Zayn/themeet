@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { EventDetailsPage } from '@/src/app/feature/events/components/event-details/event-details-page';
+import { EventDetailsPage } from '@/src/app/feature/events/components/event-details-page';
 import { EventDetailsPageProps } from '@/src/app/feature/events/types/event-types';
 
 interface PageProps {
@@ -54,6 +54,7 @@ export default async function EventPage({ params }: PageProps) {
       agenda: event.agenda,
       organizer: event.organizer,
       tags: event.tags,
+      totalParticipants: typeof event.totalParticipants === 'number' ? event.totalParticipants : 0,
     },
   };
 

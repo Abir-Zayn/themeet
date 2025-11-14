@@ -1,7 +1,9 @@
 import connectDB from "@/src/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import Event from "@/src/lib/database/event.model";
+import Booking from "@/src/lib/database/booking.model";
 import { v2 as cloudinary } from "cloudinary";
+import { Types } from "mongoose";
 
 export async function POST(req: NextRequest) {
   try {
@@ -103,9 +105,47 @@ export async function GET() {
   try {
     await connectDB();
     //show the new events at top
-    const events = await Event.find().sort({ createdAt: -1 });
+    const events = await Event.find()
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const eventIds = events.map((event) => event._id);
+
+    const participantCounts = await Booking.aggregate<{
+      _id: Types.ObjectId;
+      count: number;
+    }>([
+      {
+        $match: {
+          eventId: { $in: eventIds },
+          attending: { $in: ['yes', 'online'] },
+        },
+      },
+      {
+        $group: {
+          _id: '$eventId',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const countsMap = new Map<string, number>(
+      participantCounts.map((entry) => [entry._id.toString(), entry.count])
+    );
+
+    const serializedEvents = events.map((event) => {
+      const eventId =
+        typeof event._id === 'string'
+          ? event._id
+          : (event._id as Types.ObjectId | undefined)?.toString?.() ?? '';
+
+      return {
+        ...event,
+        totalParticipants: countsMap.get(eventId) ?? 0,
+      };
+    });
     return NextResponse.json(
-      { message: "Events fetched successfully", events },
+      { message: "Events fetched successfully", events: serializedEvents },
       { status: 200 }
     );
   } catch (error) {

@@ -5,10 +5,11 @@ import {
   Eclipse,
   LocationEdit,
   UserRoundSearch,
+  UsersRound,
 } from "lucide-react";
 import Image from "next/image";
 import { EventDetailsItem } from "./event-details-item";
-import { EventAgendaProps, EventDetailsPageProps, EventTagProps } from "../../types/event-types";
+import { EventAgendaProps, EventDetailsPageProps, EventTagProps } from "../types/event-types";
 
 const EventAgenda = ({ agendaItems, children }: EventAgendaProps) => (
   <div className="agenda">
@@ -91,6 +92,11 @@ export const EventDetailsPage = ({ event }: EventDetailsPageProps) => {
                   icon={UserRoundSearch}
                   alt="Audience"
                   label={event.audience}
+                />
+                <EventDetailsItem
+                  icon={UsersRound}
+                  alt="Participants"
+                  label={`${event.totalParticipants} registered`}
                 />
               </div>
             </section>
